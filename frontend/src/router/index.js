@@ -21,14 +21,21 @@ const router = createRouter({
                 {
                     path:'/reset',
                     name:'welcome-reset',
-                    component:()=>import('@/views/welcome/ResetPage.vue')
+                    component:()=>import('@/views/welcome/ForgetPage.vue')
                 }
             ]
         },
         {
             path:'/index',
             name:'index',
-            component:()=>import('@/views/IndexPage.vue')
+            component:()=>import('@/views/IndexPage.vue'),
+            children:[
+                {
+                    path: 'user-setting',
+                    name: 'user-setting',
+                    component: () => import('@/views/settings/UserSettings.vue')
+                }
+            ]
         }
     ]
 })

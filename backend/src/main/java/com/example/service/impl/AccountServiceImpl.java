@@ -6,6 +6,7 @@ import com.example.entity.dto.Account;
 import com.example.entity.vo.request.ConfirmResetVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
+import com.example.entity.vo.request.ModifyEmailVO;
 import com.example.mapper.AccountMapper;
 import com.example.service.AccountService;
 import com.example.utils.Const;
@@ -137,5 +138,32 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 .or()
                 .eq("username",username)
                 .one();
+    }
+
+    @Override
+    public Account findAccountById(int id) {
+        return this.query().eq("id",id).one();
+    }
+
+    @Override
+    public String modifyEmail(int id, ModifyEmailVO vo) {
+        //先看验证码是否为空
+        String code = vo.getCode();
+        if(code == null || code.isEmpty()) return "请先输入验证码";
+        //验证码是否相符合
+        String email = vo.getEmail();
+        String redis_code = redisTemplate.opsForValue().get(Const.VERIFY_EMAIL_DATA+email);
+        if(!code.equals(redis_code)) return "验证码错误，请重新输入";
+        redisTemplate.delete(Const.VERIFY_EMAIL_DATA+email);
+        Account account = this.findAccountByEmailOrName(email);
+        //用户不存在或者电子邮件本身就是自己
+        if(account == null || account.getId()==id){
+            this.update()
+                    .eq("id",id)
+                    .set("email",email)
+                    .update();
+            return null;
+        }
+        return "邮箱已被他人注册，请重新更换。";
     }
 }

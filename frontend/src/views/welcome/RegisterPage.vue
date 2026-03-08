@@ -45,7 +45,7 @@ const isEmailValid= computed(()=> /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2
 
 function askCode(){
   if(isEmailValid.value){
-    get(`/auth/ask-code?email=${form.email}&type=register`,()=>{
+    get(`/api/auth/ask-code?email=${form.email}&type=register`,()=>{
       coldTime.value = 60
       ElMessage.success(`发送成功，${form.email},请注意查收`)
       let timer=setInterval(()=>{
@@ -68,7 +68,7 @@ function askCode(){
 function handlerRegister(){
   formRef.value.validate((valid)=>{
     if(valid){
-      post('/auth/register',{...form},()=>{
+      post('/api/auth/register',{...form},()=>{
         ElMessage.success('注册成功')
         router.push('/')
       })

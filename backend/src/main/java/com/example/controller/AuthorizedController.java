@@ -5,7 +5,6 @@ import com.example.entity.vo.request.ConfirmResetVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
 import com.example.service.AccountService;
-import com.github.yulichang.wrapper.segments.Fun;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,7 +25,7 @@ public class AuthorizedController {
     @GetMapping("/ask-code")
     //漏洞是注册的验证码可以用来请求密码重置，在获取验证码那里加一下，如果邮箱被注册且是注册操作就不返回验证码就可以
     public RestBean<Void> askVerifyCode(@RequestParam @Email String email,
-                                        @RequestParam @Pattern(regexp = "(register|reset)") String type,
+                                        @RequestParam @Pattern(regexp = "(register|reset|modify)") String type,
                                         HttpServletRequest request){
         return this.messageHandle(() -> service.sendEmailCode(email,type,request.getRemoteAddr()));
     }
@@ -43,6 +42,7 @@ public class AuthorizedController {
     }
     @PostMapping("/reset-password")
     public RestBean<Void> resetConfirm(@RequestBody @Valid EmailResetVO vo){
+
         return this.messageHandle(vo,service::resetEmailAccountPassword);
     }
 

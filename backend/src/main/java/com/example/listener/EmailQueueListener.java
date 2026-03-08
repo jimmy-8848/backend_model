@@ -28,6 +28,7 @@ public class EmailQueueListener {
                 switch (type){
                     case "register"-> createMessage(email,"欢迎注册我们的网站","您的验证码为："+code+",您正在注册我们的网站，为了您的安全，请勿泄露验证码。");
                     case "reset" -> createMessage(email,"您正在进行密码重置","您的验证码为"+code+",您正在进行密码重置操作，若非本人操作，请无视。");
+                    case "modify" -> createMessage(email,"您正在进行电子邮件重置","您的验证码为"+code+",您正在进行电子邮件重置操作，若非本人操作，请无视。");
                     default -> null;
                 };
         if(message == null) return;

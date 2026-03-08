@@ -50,8 +50,8 @@ public class SecurityConfiguration {
                 .sessionManagement(conf->conf
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(conf->conf
-                        .requestMatchers("/api/auth/**","/error")
-                        .permitAll()
+                        .requestMatchers("/api/auth/**","/error").permitAll()
+                        .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -74,7 +74,8 @@ public class SecurityConfiguration {
         Account account = accountService.findAccountByEmailOrName(user.getUsername());
         String token = jwtUtils.createToken(user, account.getId());
         AuthorizeVO vo = new AuthorizeVO();
-        BeanUtils.copyProperties(user,vo);
+        vo.setUsername(account.getUsername());
+        vo.setRole(vo.getRole());
         vo.setExpireTime(jwtUtils.expireTime());
         vo.setToken(token);
         writer.write(RestBean.success(vo).toJsonString());
