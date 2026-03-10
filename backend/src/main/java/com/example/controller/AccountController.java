@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.RestBean;
 import com.example.entity.dto.Account;
 import com.example.entity.dto.AccountDetails;
+import com.example.entity.vo.request.ChangePwdVO;
 import com.example.entity.vo.request.DetailsSaveVO;
 import com.example.entity.vo.request.ModifyEmailVO;
 import com.example.entity.vo.response.AccountDetailsVO;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/user")
@@ -44,8 +46,15 @@ public class AccountController {
     @PostMapping("/modify-email")
     public RestBean<Void> saveDetails(@RequestAttribute(name = Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid ModifyEmailVO vo){
-        String message = accountService.modifyEmail(id, vo);
-        return message == null ? RestBean.success() : RestBean.failure(400,message);
-
+        return this.messageHandle(()-> accountService.modifyEmail(id, vo));
+    }
+    @PostMapping("/change-password")
+    public RestBean<Void> changePassword(@RequestAttribute(name = Const.ATTR_USER_ID) int id,
+                                         @RequestBody @Valid ChangePwdVO vo){
+        return this.messageHandle(()->accountService.changePassword(id,vo));
+    }
+    private RestBean<Void> messageHandle(Supplier<String> action){
+        String message = action.get();
+        return message == null ?  RestBean.success(): RestBean.failure(400, message);
     }
 }

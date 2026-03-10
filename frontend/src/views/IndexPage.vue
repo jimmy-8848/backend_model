@@ -168,7 +168,7 @@ function userLogout(){
                     <span>个人信息设置</span>
                   </template>
                 </el-menu-item>
-                <el-menu-item>
+                <el-menu-item index="/index/privacy-setting">
                   <template #title>
                     <el-icon><Lock/></el-icon>
                     <span>账号安全设置</span>
