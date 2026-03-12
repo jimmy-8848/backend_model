@@ -73,7 +73,7 @@ function get(url,success,failure=defaultFailure){
 
 //login方法
 function login(username,password,remember,success){
-    internalPost('/auth/login',{username:username,password:password},
+    internalPost('/api/auth/login',{username:username,password:password},
         {'Content-Type':'application/x-www-form-urlencoded'},
         (data)=>{
         ElMessage.success(`登录成功，欢迎${data.username}进入我们的系统`)
@@ -84,7 +84,7 @@ function login(username,password,remember,success){
 
 //logout方法
 function logout(success){
-    get('/auth/logout',()=>{
+    get('/api/auth/logout',()=>{
         ElMessage.success('退出登录成功')
         deleteToken()
         success()

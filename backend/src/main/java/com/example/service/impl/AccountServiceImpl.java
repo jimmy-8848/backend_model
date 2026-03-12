@@ -3,9 +3,7 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
-import com.example.entity.vo.request.ConfirmResetVO;
-import com.example.entity.vo.request.EmailRegisterVO;
-import com.example.entity.vo.request.EmailResetVO;
+import com.example.entity.vo.request.*;
 import com.example.mapper.AccountMapper;
 import com.example.service.AccountService;
 import com.example.utils.Const;
@@ -96,6 +94,19 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
+    public String changePassword(int id, ChangePwdVO vo) {
+        String password = this.query().eq("id",id).one().getPassword();
+        if(!encoder.matches(vo.getPassword(),password)) return "原密码不符合";
+        String new_pwd = encoder.encode(vo.getNew_password());
+        boolean success = this.
+                update()
+                .eq("id",id)
+                .set("password",new_pwd)
+                .update();
+        return success ? null : "出现了点错误，请联系管理员";
+    }
+
+    @Override
     public String resetEmailAccountPassword(EmailResetVO vo) {
         //可以用Bean工具类，这里修改了，本来要在ConfirmResetVo上加一个全参数构造的，然后构造一个新的对象
         //还有可以用继承关系，到时候填vo就好了
@@ -137,5 +148,32 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                 .or()
                 .eq("username",username)
                 .one();
+    }
+
+    @Override
+    public Account findAccountById(int id) {
+        return this.query().eq("id",id).one();
+    }
+
+    @Override
+    public String modifyEmail(int id, ModifyEmailVO vo) {
+        //先看验证码是否为空
+        String code = vo.getCode();
+        if(code == null || code.isEmpty()) return "请先输入验证码";
+        //验证码是否相符合
+        String email = vo.getEmail();
+        String redis_code = redisTemplate.opsForValue().get(Const.VERIFY_EMAIL_DATA+email);
+        if(!code.equals(redis_code)) return "验证码错误，请重新输入";
+        redisTemplate.delete(Const.VERIFY_EMAIL_DATA+email);
+        Account account = this.findAccountByEmailOrName(email);
+        //用户不存在或者电子邮件本身就是自己
+        if(account == null || account.getId()==id){
+            this.update()
+                    .eq("id",id)
+                    .set("email",email)
+                    .update();
+            return null;
+        }
+        return "邮箱已被他人注册，请更换电子邮箱。";
     }
 }

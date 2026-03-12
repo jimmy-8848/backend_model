@@ -39,7 +39,7 @@ const isEmailValid= computed(()=> /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2
 
 function askCode(){
   if(isEmailValid.value){
-    get(`/auth/ask-code?email=${form.email}&type=reset`,()=>{
+    get(`/api/auth/ask-code?email=${form.email}&type=reset`,()=>{
       coldTime.value = 60
       ElMessage.success(`发送成功，${form.email},请注意查收`)
       let timer=setInterval(()=>{
@@ -62,7 +62,7 @@ function askCode(){
 function doConfirm(){
   formRef.value.validate((valid)=>{
     if(valid){
-      post('/auth/reset-confirm',{...form},()=>{
+      post('/api/auth/reset-confirm',{...form},()=>{
         active.value++
       })
     }else{
@@ -73,7 +73,7 @@ function doConfirm(){
 function doReset(){
   formRef.value.validate((valid)=>{
     if(valid){
-      post('/auth/reset-password',{...form},()=>{
+      post('/api/auth/reset-password',{...form},()=>{
         ElMessage.success('重置密码成功')
         router.push('/')
       })
