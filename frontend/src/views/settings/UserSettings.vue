@@ -3,12 +3,13 @@ import Card from "@/views/components/Card.vue";
 import {Message, Refresh, Select, User} from "@element-plus/icons-vue";
 import {useStore} from "@/store/index.js";
 import {computed, reactive, ref} from "vue";
-import {get, post} from "@/net/index.js";
+import {get, getAccessHeader, post} from "@/net/index.js";
 import {ElMessage} from "element-plus";
+import axios from "axios";
 
 const baseFormRef = ref()
 const emailFormRef = ref()
-
+const store = useStore()
 const baseForm = reactive({
   username: '',
   gender: 0,
@@ -111,8 +112,23 @@ const rule = {
     {type:'email',message: '请输入正确格式的电子邮箱',trigger:['blur','change']}],
   code:[{required:true,message:'请输入验证码',trigger:['blur']}]
 }
-
-const store = useStore()
+//上传图像前检查类型和大小
+function beforeAvatarUpload(rawFile){
+  //检查类型 一般是PNG/JPG
+  if(rawFile.type !== 'image/png' && rawFile.type!=='image/jpeg'){
+    ElMessage.error('上传文件类型只能是PNF/JPG')
+    return false;
+  }else if(rawFile.size / 1024 > 100){
+    ElMessage.error('大小不能超过100KB')
+    return false;
+  }
+  ElMessage.success('上传头像成功')
+  return true;
+}
+//上传图像成功后
+function uploadAvatarSuccess(response){
+  store.user.avatar = response.data
+}
 const registerTime = computed(()=>new Date(store.user.registerTime).toLocaleString())
 </script>
 
@@ -177,7 +193,18 @@ const registerTime = computed(()=>new Date(store.user.registerTime).toLocaleStri
     <div  style="top: 20px;position: sticky">
       <Card>
         <div style="text-align: center;padding: 5px 15px 0 15px">
-          <el-avatar :size="100" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+          <el-avatar :size="70" :src="store.avatarUrl"/>
+          <div style="margin:5px 0">
+            <el-upload
+                :before-upload="beforeAvatarUpload"
+                :show-file-list="false"
+                :on-success="uploadAvatarSuccess"
+                :action="axios.defaults.baseURL + '/api/images/avatar'"
+                :headers="getAccessHeader()"
+            >
+              <el-button size="small" round>修改图像</el-button>
+            </el-upload>
+          </div>
           <div style="font-weight: bold">你好,{{store.user.username}}</div>
         </div>
         <el-divider style="margin: 10px 0"></el-divider>

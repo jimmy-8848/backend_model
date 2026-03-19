@@ -95,4 +95,4 @@ function logout(success){
 function isUnauthorizedToken(){
     return !getToken()
 }
-export {isUnauthorizedToken,login,logout,post,get}
+export {isUnauthorizedToken,login,logout,post,get,getAccessHeader}
