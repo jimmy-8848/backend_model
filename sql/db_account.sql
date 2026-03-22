@@ -1,2 +1,0 @@
-INSERT INTO `db_account`(`id`, `username`, `password`, `email`, `role`, `register_time`) VALUES (10, 'test', '$2a$10$9EwKnRdb7NP42rCxx5lCyedCiUfhNrkAqgVm8s.WBbKkbrXb9cPkS', '3066495576@qq.com', 'user', '2025-12-07 06:50:01');
-INSERT INTO `db_account`(`id`, `username`, `password`, `email`, `role`, `register_time`) VALUES (11, 'test2', '$2a$10$hvaQew.OO3oZWb.QqRqrLOwc7rJADd5N.gllGMejJnWE9iSJGKChu', 'lmu28513@gmail.com', 'user', '2026-03-05 10:36:13');
