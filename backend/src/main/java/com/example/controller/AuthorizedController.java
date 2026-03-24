@@ -42,6 +42,7 @@ public class AuthorizedController {
     }
     @PostMapping("/reset-password")
     public RestBean<Void> resetConfirm(@RequestBody @Valid EmailResetVO vo){
+
         return this.messageHandle(vo,service::resetEmailAccountPassword);
     }
 
