@@ -2,6 +2,7 @@
 
 import LightCard from "@/views/components/LightCard.vue";
 import {Calendar, CollectionTag} from "@element-plus/icons-vue";
+import Weather from "@/views/components/Weather.vue";
 </script>
 
 <template>
@@ -29,6 +30,7 @@ import {Calendar, CollectionTag} from "@element-plus/icons-vue";
           <el-icon style="translate: 0 2px"><Calendar/></el-icon>
           天气
         </div>
+        <Weather/>
       </LightCard>
     </div>
 
